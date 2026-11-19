@@ -1,10 +1,10 @@
 
-// Purpose: Classifies directed triads using canonical 6-bit encoding.
+// Purpose: Classifies directed triads and counts all 13 connected triad classes.
 
 #include "triads.h"
 #include <algorithm>
-#include <array>
 #include <map>
+#include <tuple>
 
 int triad_class(
     int a,
@@ -13,6 +13,8 @@ int triad_class(
     const set<pair<int, int>>& edges
 ) {
     array<int, 3> nodes = {a, b, c};
+
+    sort(nodes.begin(), nodes.end());
 
     int canonical_code = 63;
 
@@ -41,7 +43,7 @@ int triad_class(
 
     } while (next_permutation(nodes.begin(), nodes.end()));
 
-    map<int, int> classes = {
+    static const map<int, int> classes = {
         {3, 1},
         {6, 2},
         {7, 3},
@@ -64,4 +66,73 @@ int triad_class(
     }
 
     return it->second;
+}
+
+array<long long, 13> count_triads(
+    const vector<int>& nodes,
+    const vector<pair<int, int>>& edges
+) {
+    array<long long, 13> counts = {};
+
+    map<int, set<int>> neighbours;
+    set<pair<int, int>> directed_edges;
+
+    for (int node : nodes) {
+        neighbours[node];
+    }
+
+    for (auto edge : edges) {
+        int u = edge.first;
+        int v = edge.second;
+
+        directed_edges.insert(edge);
+
+        neighbours[u].insert(v);
+        neighbours[v].insert(u);
+    }
+
+    set<tuple<int, int, int>> unique_triads;
+
+    for (auto entry : neighbours) {
+        int center = entry.first;
+
+        vector<int> adjacent(
+            entry.second.begin(),
+            entry.second.end()
+        );
+
+        for (int i = 0; i < (int)adjacent.size(); i++) {
+            for (int j = i + 1; j < (int)adjacent.size(); j++) {
+                int a = center;
+                int b = adjacent[i];
+                int c = adjacent[j];
+
+                vector<int> triad = {a, b, c};
+
+                sort(triad.begin(), triad.end());
+
+                unique_triads.insert({
+                    triad[0],
+                    triad[1],
+                    triad[2]
+                });
+            }
+        }
+    }
+
+    for (auto triad : unique_triads) {
+        int a = get<0>(triad);
+        int b = get<1>(triad);
+        int c = get<2>(triad);
+
+        int class_number = triad_class(
+            a, b, c, directed_edges
+        );
+
+        if (class_number >= 1 && class_number <= 13) {
+            counts[class_number - 1]++;
+        }
+    }
+
+    return counts;
 }

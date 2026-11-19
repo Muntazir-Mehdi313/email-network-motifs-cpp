@@ -1,4 +1,3 @@
-
 // Purpose: Calculates triad means, population standard deviations and Z-scores.
 
 #include "statistics.h"
@@ -14,42 +13,40 @@ array<Statistics, 13> calculate_statistics(
     }
 
     array<Statistics, 13> results = {};
-
-    int network_count = randomized.size();
+    const double network_count = static_cast<double>(randomized.size());
 
     for (int i = 0; i < 13; i++) {
-
-        double sum = 0;
+        double sum = 0.0;
 
         for (const auto& network : randomized) {
-            sum += network[i];
+            sum += static_cast<double>(network[i]);
         }
 
-        double mean = sum / network_count;
-        double variance = 0;
+        const double mean = sum / network_count;
+        double variance = 0.0;
 
         for (const auto& network : randomized) {
-            double difference = network[i] - mean;
+            const double difference = static_cast<double>(network[i]) - mean;
             variance += difference * difference;
         }
 
+        // Population standard deviation is used for the randomized sample.
         variance /= network_count;
-
-        double standard_deviation = sqrt(variance);
+        const double standard_deviation = sqrt(variance);
 
         results[i].mean = mean;
         results[i].standard_deviation = standard_deviation;
 
-        if (standard_deviation > 0) {
-            results[i].z_score =
-                (observed[i] - mean) / standard_deviation;
-
-            results[i].valid = true;
+        // The project specification defines Z = 0 when SD = 0.
+        if (standard_deviation == 0.0) {
+            results[i].z_score = 0.0;
         }
         else {
-            results[i].z_score = 0;
-            results[i].valid = false;
+            results[i].z_score =
+                (static_cast<double>(observed[i]) - mean) / standard_deviation;
         }
+
+        results[i].valid = true;
     }
 
     return results;

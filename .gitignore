@@ -1,0 +1,13 @@
+
+# Purpose: Excludes generated files and build artifacts from Git.
+
+*.exe
+*.obj
+*.pdb
+
+# Temporary files
+*.tmp
+*.log
+
+# IDE files
+.vs/

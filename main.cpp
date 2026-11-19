@@ -4,13 +4,15 @@
 #include <iostream>
 #include <stdexcept>
 #include "graph.h"
-
+#include "triads.h"
 using namespace std;
 
 int main() {
+    
     const int R = 5298;
 
     try {
+
         Graph graph = load_edges("data/email-Eu-core.txt");
 
         vector<int> departments =
@@ -100,6 +102,18 @@ cout << "Edges: " << department_b.edges.size() << endl;
         cerr << "Error: " << e.what() << endl;
         return 1;
     }
+set<pair<int, int>> test_edges = {
+    {0, 1},
+    {0, 2},
+    {1, 0},
+    {1, 2},
+    {2, 0},
+    {2, 1}
+};
 
+cout << "\nTriad Classification Test:" << endl;
+
+cout << "All mutual connections: Class "
+     << triad_class(0, 1, 2, test_edges) << endl;
     return 0;
 }

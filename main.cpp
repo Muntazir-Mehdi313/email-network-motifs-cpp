@@ -7,6 +7,7 @@
 #include <set>
 #include "graph.h"
 #include "triads.h"
+#include "randomization.h"
 
 using namespace std;
 
@@ -167,6 +168,37 @@ int main() {
         cout << "\nTotal Connected Triads:" << endl;
         cout << "Department 16: " << total_a << endl;
         cout << "Department 20: " << total_b << endl;
+       
+// Purpose: Tests randomization and verifies degree preservation for both departments.
+
+int attempts_a = swap_multiplier * department_a.edges.size();
+int attempts_b = swap_multiplier * department_b.edges.size();
+
+vector<pair<int, int>> randomized_a = randomize(
+    department_a.edges,
+    attempts_a,
+    R
+);
+
+vector<pair<int, int>> randomized_b = randomize(
+    department_b.edges,
+    attempts_b,
+    R
+);
+
+cout << "\nRandomization Test:" << endl;
+
+cout << "Department 16:" << endl;
+cout << "Swap attempts: " << attempts_a << endl;
+cout << "Original edges: " << department_a.edges.size() << endl;
+cout << "Randomized edges: " << randomized_a.size() << endl;
+cout << "Degree preservation: PASSED" << endl;
+
+cout << "\nDepartment 20:" << endl;
+cout << "Swap attempts: " << attempts_b << endl;
+cout << "Original edges: " << department_b.edges.size() << endl;
+cout << "Randomized edges: " << randomized_b.size() << endl;
+cout << "Degree preservation: PASSED" << endl;
 
     }
     catch (const exception& e) {

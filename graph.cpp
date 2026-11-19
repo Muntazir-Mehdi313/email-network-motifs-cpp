@@ -1,12 +1,12 @@
 
-// Purpose: Loads and cleans the email graph and creates department subgraphs.
+// Purpose: Loads and cleans the email graph, ranks departments and creates induced subgraphs.
 
 #include "graph.h"
 #include <fstream>
+#include <string>
 #include <set>
 #include <algorithm>
 #include <stdexcept>
-#include <string>
 
 Graph load_edges(const string& filename) {
     ifstream file(filename);
@@ -30,14 +30,10 @@ Graph load_edges(const string& filename) {
         graph.edges.push_back(edge);
     }
 
-    set<int> nodes;
-
-    for (auto edge : graph.edges) {
-        nodes.insert(edge.first);
-        nodes.insert(edge.second);
+    // Include all 1005 nodes, including isolated nodes.
+    for (int i = 0; i < 1005; i++) {
+        graph.nodes.push_back(i);
     }
-
-    graph.nodes.assign(nodes.begin(), nodes.end());
 
     return graph;
 }
@@ -75,6 +71,7 @@ vector<DepartmentInfo> get_top_departments(
         if (u >= 0 && u < 1005 &&
             v >= 0 && v < 1005 &&
             departments[u] >= 0 &&
+            departments[u] < 42 &&
             departments[u] == departments[v]) {
 
             counts[departments[u]]++;

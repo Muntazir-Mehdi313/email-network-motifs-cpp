@@ -1,26 +1,12 @@
 
 // Purpose: Declares functions for triad classification and counting.
-
 #ifndef TRIADS_H
 #define TRIADS_H
 
-#include <set>
-#include <vector>
-#include <array>
-#include <utility>
+const int MAX = 100;
 
-using namespace std;
+int triadClass(int a, int b, int c, int adj[MAX][MAX]);
 
-int triad_class(
-    int a,
-    int b,
-    int c,
-    const set<pair<int, int>>& edges
-);
-
-array<long long, 13> count_triads(
-    const vector<int>& nodes,
-    const vector<pair<int, int>>& edges
-);
+void countTriads(int n, int adj[MAX][MAX], int counts[13]);
 
 #endif

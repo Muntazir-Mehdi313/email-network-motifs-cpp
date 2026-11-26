@@ -1,53 +1,54 @@
-// Purpose: Calculates triad means, population standard deviations and Z-scores.
-
 #include "statistics.h"
 #include <cmath>
-#include <stdexcept>
 
-array<Statistics, 13> calculate_statistics(
-    const array<long long, 13>& observed,
-    const vector<array<long long, 13>>& randomized
-) {
-    if (randomized.empty()) {
-        throw runtime_error("No randomized networks available.");
-    }
+void calculateStatistics(
+    int observed[13],
+    int randomized[][13],
+    int numberOfRandomized,
+    Statistics results[13]
+)
+{
+    for (int i = 0; i < 13; i++)
+    {
+        double sum = 0;
 
-    array<Statistics, 13> results = {};
-    const double network_count = static_cast<double>(randomized.size());
-
-    for (int i = 0; i < 13; i++) {
-        double sum = 0.0;
-
-        for (const auto& network : randomized) {
-            sum += static_cast<double>(network[i]);
+        // Calculate mean
+        for (int j = 0; j < numberOfRandomized; j++)
+        {
+            sum += randomized[j][i];
         }
 
-        const double mean = sum / network_count;
-        double variance = 0.0;
+        double mean = sum / numberOfRandomized;
 
-        for (const auto& network : randomized) {
-            const double difference = static_cast<double>(network[i]) - mean;
+        // Calculate variance
+        double variance = 0;
+
+        for (int j = 0; j < numberOfRandomized; j++)
+        {
+            double difference = randomized[j][i] - mean;
+
             variance += difference * difference;
         }
 
-        // Population standard deviation is used for the randomized sample.
-        variance /= network_count;
-        const double standard_deviation = sqrt(variance);
+        variance = variance / numberOfRandomized;
+
+        // Calculate standard deviation
+        double standardDeviation = sqrt(variance);
 
         results[i].mean = mean;
-        results[i].standard_deviation = standard_deviation;
+        results[i].standard_deviation = standardDeviation;
 
-        // The project specification defines Z = 0 when SD = 0.
-        if (standard_deviation == 0.0) {
-            results[i].z_score = 0.0;
+        // Calculate Z-score
+        if (standardDeviation == 0)
+        {
+            results[i].z_score = 0;
         }
-        else {
+        else
+        {
             results[i].z_score =
-                (static_cast<double>(observed[i]) - mean) / standard_deviation;
+                (observed[i] - mean) / standardDeviation;
         }
 
         results[i].valid = true;
     }
-
-    return results;
 }
